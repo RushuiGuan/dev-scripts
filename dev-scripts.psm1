@@ -130,3 +130,68 @@ function Pack(
 		}
 	}
 }
+function FindAndKillTerminalTab([System.Diagnostics.Process]$process) {
+	$diff = [datetime]::MaxValue.Ticks;
+	[System.Diagnostics.Process]$openConsoleProcess;
+	Get-Process "OpenConsole" | ForEach-Object {
+		$gap = $process.StartTime.Ticks - $_.StartTime.Ticks;
+		if ($gap -ge 0 -and $diff -gt $gap -and $gap -lt 1000000) {
+			$diff = $gap;
+			$openConsoleProcess = $_;
+		}
+	}
+	if ($openConsoleProcess) {
+		Write-Information "Killing the terminal window tab $($openConsoleProcess.ProcessName) $($openConsoleProcess.Id)";
+		Stop-Process -Id $openConsoleProcess.Id -Force;
+		Start-Sleep -Seconds 0.1;
+	}
+	Write-Information "Stopping process $($process.ProcessName)";
+	Stop-Process -Id $process.Id -Force;
+	Start-Sleep -Seconds 0.1;
+}
+
+function KillProcess([System.Diagnostics.Process]$process) {
+	[System.Diagnostics.Process]$parentProcess = $process.Parent;
+	if ($parentProcess -and $parentProcess.ProcessName -eq "WindowsTerminal") {
+		FindAndKillTerminalTab $process;
+	}
+	else {
+		Write-Information "Stopping process $($process.ProcessName)";
+		Stop-Process -Id $process.Id -Force;
+		Start-Sleep -Seconds 0.1;
+		Write-Output $process.ProcessName;
+	}
+}
+
+function Build(
+		[parameter(Mandatory = $true)]
+		[System.IO.DirectoryInfo]
+		$directory
+) {
+	$root = Resolve-Path -Path $directory;
+
+	if (-not [System.IO.Directory]::Exists($root)) {
+		Write-Error "Directory $root does not exist"
+	}
+	else {
+		Write-Information "Project directory: $root"
+	}
+
+	if (-not [System.IO.File]::Exists((Join $root, .projects))) {
+		Write-Error ".projects file not found"
+	}
+
+	$testProjects = devtools project list -f (Join $root, .projects) -h tests
+	Write-Information "Test projects: $($testProjects -join ', ')"
+
+	$projects = devtools project list -f (Join $root, .projects) -h packages
+	Write-Information "Projects: $($projects -join ', ')"
+
+	$services = devtools project list -f (Join $root, .projects) -h services
+	Write-Information "Services: $($services -join ', ')"
+
+	if ($projects.Length -eq 0) {
+		Write-Information "Nothing to do";
+		return;	
+	}
+}
