@@ -20,13 +20,16 @@ function Join(
 }
 
 function Use-Filter(
-	[parameter(Mandatory = $true)]
+	[parameter(Mandatory = $false)]
 	[string[]]
 	$items,
 	[parameter(Mandatory = $false)]
 	[string[]]
 	$patterns = @()
 ) {
+	if($items -eq $null) {
+		return @();
+	}
 	if ($patterns.Count -eq 0) {
 		return $items;
 	}

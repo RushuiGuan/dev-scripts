@@ -43,9 +43,9 @@ function Build(
 	$apps = devtools project list -f (Join $root, .projects) -h apps
 	$apps = Use-Filter -items $apps -patterns $patterns
 
+
 	$services = devtools project list -f (Join $root, .projects) -h services
 	$services = Use-Filter -items $services -patterns $patterns
-
 
 	foreach ($app in $apps) {
 		$csproj = Get-ProjectRoot -root $root -project $app;
