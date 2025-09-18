@@ -50,14 +50,14 @@ function Build(
 	foreach ($app in $apps) {
 		$csproj = Get-ProjectRoot -root $root -project $app;
 		Write-Information "Building $app at $csproj";
-		Invoke-Strict dotnet publish $csproj -c Release --output (Join $env:DevDirectory, $app)
+		Invoke-Strict dotnet publish $csproj -c Release --output (Join $env:InstallDirectory, $app)
 	}
 
 	foreach ($service in $services) {
 		KillProcess -name $service
 		$csproj = Get-ProjectRoot -root $root -project $service;
 		Write-Information "Building $service at $csproj";
-		Invoke-Strict dotnet publish $csproj -c Release --output (Join $env:DevDirectory, $service)
+		Invoke-Strict dotnet publish $csproj -c Release --output (Join $env:InstallDirectory, $service)
 	}
 	if ($run) {
 		RunProcess $services;
