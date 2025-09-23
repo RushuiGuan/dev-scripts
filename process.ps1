@@ -45,9 +45,9 @@ function RunProcess([string[]]$projects2Run) {
 	$projects2Run | ForEach-Object {
 		Write-Information "Starting $_";
 		if($IsMacOS){
-			& (join $PSScriptRoot, $env:InstallDirectory, $_, $_);
+			& (join $env:InstallDirectory, $_, $_);
 		}else {
-			wt -w 0 split-pane --title $_ -d (join $PSScriptRoot, $env:InstallDirectory, $_, "$_.exe")
+			wt -w 0 split-pane --title $_  -d (join $env:InstallDirectory, $_)  (join $env:InstallDirectory, $_, "$_.exe")
 		}
 	}
 }
