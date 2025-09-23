@@ -40,23 +40,26 @@ function Build(
 		Write-Error ".projects file not found"
 	}
 
+	# Write-Information "patterns: $patterns";
+
 	$apps = devtools project list -f (Join $root, .projects) -h apps
 	$apps = Use-Filter -items $apps -patterns $patterns
-
+	# Write-Information "Found apps: $apps";
 
 	$services = devtools project list -f (Join $root, .projects) -h services
 	$services = Use-Filter -items $services -patterns $patterns
+	# Write-Information "Found services: $services";
 
 	foreach ($app in $apps) {
 		$csproj = Get-ProjectRoot -root $root -project $app;
-		Write-Information "Building $app at $csproj";
+		Write-Information "Publishing $app at $csproj";
 		Invoke-Strict dotnet publish $csproj -c Release --output (Join $env:InstallDirectory, $app)
 	}
 
 	foreach ($service in $services) {
 		KillProcess -name $service
 		$csproj = Get-ProjectRoot -root $root -project $service;
-		Write-Information "Building $service at $csproj";
+		Write-Information "Publishing $service at $csproj";
 		Invoke-Strict dotnet publish $csproj -c Release --output (Join $env:InstallDirectory, $service)
 	}
 	if ($run) {
