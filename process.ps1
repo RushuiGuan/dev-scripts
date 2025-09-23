@@ -42,15 +42,12 @@ function KillProcess([string]$name) {
 }
 
 function RunProcess([string[]]$projects2Run) {
-	$hasTab = $false;
 	$projects2Run | ForEach-Object {
 		Write-Information "Starting $_";
-		wt -w 0 split-pane --title $_ -d $PSScriptRoot $env:InstallDirectory\$_\$_.exe
-		# if ($hasTab) {
-		# 	wt -w 0 split-pane --title $_ -d $PSScriptRoot $env:InstallDirectory\$_\$_.exe
-		# } else {
-		# 	wt -w 0 new-tab --title $_ -d $PSScriptRoot $env:InstallDirectory\$_\$_.exe
-		# 	$hasTab = $true;
-		# }
+		if($IsMacOS){
+			& (join $PSScriptRoot, $env:InstallDirectory, $_, $_);
+		}else {
+			wt -w 0 split-pane --title $_ -d (join $PSScriptRoot, $env:InstallDirectory, $_, "$_.exe")
+		}
 	}
 }
