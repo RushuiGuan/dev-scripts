@@ -40,12 +40,15 @@ function Build(
 		Write-Error ".projects file not found"
 	}
 
+	# Write-Information "patterns: $patterns";
+
 	$apps = devtools project list -f (Join $root, .projects) -h apps
 	$apps = Use-Filter -items $apps -patterns $patterns
+	# Write-Information "Found apps: $apps";
 
 	$services = devtools project list -f (Join $root, .projects) -h services
 	$services = Use-Filter -items $services -patterns $patterns
-
+	# Write-Information "Found services: $services";
 
 	foreach ($app in $apps) {
 		$csproj = Get-ProjectRoot -root $root -project $app;
