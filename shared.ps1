@@ -27,7 +27,7 @@ function Use-Filter(
 	[string[]]
 	$patterns = @()
 ) {
-	if($items -eq $null) {
+	if($null -eq $items) {
 		return @();
 	}
 	if ($patterns.Count -eq 0) {
