@@ -37,8 +37,9 @@ function Pack(
 	if (-not $skipTest) {
 		# run the test projects
 		foreach ($item in $testProjects) {
-			"Testing $item";
-			Invoke-Strict dotnet test (join $root, $item, "$item.csproj") -c release
+			$csproj = Get-ProjectRoot -root $root -project $item;
+			"Testing $item at $csproj";
+			Invoke-Strict dotnet test $csproj -c release
 		}
 	}
 
