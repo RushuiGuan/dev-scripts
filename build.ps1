@@ -33,11 +33,11 @@ function Build(
 	$root = Resolve-Path -Path $directory;
 
 	if (-not [System.IO.Directory]::Exists($root)) {
-		Write-Error "Directory $root does not exist"
+		throw "Directory $root does not exist"
 	}
 
 	if (-not [System.IO.File]::Exists((Join $root, .projects))) {
-		Write-Error ".projects file not found"
+		throw ".projects file not found"
 	}
 
 	# Write-Information "patterns: $patterns";

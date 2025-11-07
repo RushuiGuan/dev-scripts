@@ -13,7 +13,7 @@ function Release(
 	$root = Resolve-Path -Path $directory;
 
 	if (-not [System.IO.Directory]::Exists($root)) {
-		Write-Error "Directory $root does not exist"
+		throw "Directory $root does not exist"
 	}
 
 	$version = Invoke-Strict devtools project property --property Version -f (Join $directory, "Directory.Build.props");

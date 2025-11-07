@@ -18,14 +18,14 @@ function Pack(
 	$root = Resolve-Path -Path $directory;
 
 	if (-not [System.IO.Directory]::Exists($root)) {
-		Write-Error "Directory $root does not exist"
+		throw "Directory $root does not exist"
 	}
 	else {
 		Write-Information "Project directory: $root"
 	}
 
 	if (-not [System.IO.File]::Exists((Join $root, .projects))) {
-		Write-Error ".projects file not found"
+		throw ".projects file not found"
 	}
 
 	$testProjects = devtools project list -f (Join $root, .projects) -h tests
@@ -56,7 +56,7 @@ function Pack(
 
 	# if $prod is true or $tag is true, do not proceed if the directory is dirty
 	if (($tag -or $prod) -and $isDirty) {
-		Write-Error "Directory has uncomitted changes. Please commit or stash changes before proceeding with a prod build"
+		throw "Directory has uncomitted changes. Please commit or stash changes before proceeding with a prod build"
 	}
 	$oldVersion = Invoke-Strict devtools project property --project-file (Join $root, Directory.Build.props) --property Version
 	$version = Invoke-Strict devtools project version --directory-build-props --directory $root --prod="$prod"
