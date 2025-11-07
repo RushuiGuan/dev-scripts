@@ -44,3 +44,15 @@ function Use-Filter(
 	}
 	return $result;
 }
+
+function Confirm-NonProdDotNetEnvironment{
+	if ($env:ASPNETCORE_ENVIRONMENT -eq "production" `
+			-or $env:ASPNETCORE_ENVIRONMENT -eq "prod")	{
+		Write-Error "!!!FULL STOP!!! Current ASPNETCORE_ENVIRONMENT is PRODUCTION";
+	}
+
+	if ($env:DOTNET_ENVIRONMENT -eq "production" `
+			-or $env:DOTNET_ENVIRONMENT -eq "prod")	{
+		Write-Error "!!!FULL STOP!!! Current DOTNET_ENVIRONMENT is PRODUCTION";
+	}
+}
